@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de Expedientes</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 700px; margin: 20px auto; padding: 0 15px; background: #f4f4f9; }
+    .panel { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 10px; margin-top: 4px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+    button { margin-top: 12px; padding: 10px 14px; cursor: pointer; border: none; border-radius: 4px; background: #272b2e; color: white; font-weight: bold; }
+    button.sec { background: #555; }
+    button.del { background: #33cc4c; }
+    .nota-card { background: white; margin-top: 15px; padding: 15px; border-radius: 8px; border-left: 5px solid #232629; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
+    .nota-texto { white-space: pre-wrap; font-family: monospace; font-size: 14px; margin-bottom: 10px; }
+
+    @media print {
+      .no-imprimir { display: none; }
+      body { background: white; margin: 0; }
+      .nota-card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="panel no-imprimir">
+    <h2>Nueva Nota / Expediente</h2>
+    <label>Nombre completo:</label>
+    <input type="text" id="nombre" placeholder="Ej. Juan Pérez">
+
+    <label>Estatus:</label>
+    <select id="estatus">
+      <option value="Activo">Activo</option>
+      <option value="En seguimiento">En seguimiento</option>
+      <option value="Cerrado">Cerrado</option>
+    </select>
+
+    <label>Observaciones:</label>
+    <textarea id="obs" rows="3"></textarea>
+
+    <button onclick="agregarNota()">Guardar y agregar nota</button>
+    <button class="sec" onclick="window.print()">Imprimir / PDF todas</button>
+  </div>
+
+  <h3 class="no-imprimir">Historial de notas</h3>
+  <div id="historial"></div>
+
+  <script>
+    let notas = JSON.parse(localStorage.getItem('mis_notas')) || [];
+
+    function renderizar() {
+      const contenedor = document.getElementById('historial');
+      contenedor.innerHTML = '';
+
+      if (notas.length === 0) {
+        contenedor.innerHTML = '<p class="no-imprimir">Aún no hay notas guardadas.</p>';
+        return;
+      }
+
+      notas.forEach((nota, index) => {
+        const div = document.createElement('div');
+        div.className = 'nota-card';
+        div.innerHTML = `
+          <div class="nota-texto">${nota}</div>
+          <div class="no-imprimir">
+            <button class="sec" onclick="copiar(${index})">Copiar</button>
+            <button class="del" onclick="borrar(${index})">Borrar</button>
+          </div>
+        `;
+        contenedor.appendChild(div);
+      });
+    }
+
+    function agregarNota() {
+      const nombre = document.getElementById('nombre').value.trim() || 'Sin especificar';
+      const estatus = document.getElementById('estatus').value;
+      const obs = document.getElementById('obs').value.trim() || 'Ninguna.';
+      const fecha = new Date().toLocaleString('es-MX');
+
+      const texto = `EXPEDIENTE / NOTA\nFecha: ${fecha}\n----------------------------------------\nTitular: ${nombre}\nEstatus: ${estatus}\n\nObservaciones:\n${obs}`;
+
+      notas.unshift(texto); // Agrega la más reciente arriba
+      localStorage.setItem('mis_notas', JSON.stringify(notas));
+
+      // Limpia el formulario para la siguiente nota
+      document.getElementById('nombre').value = '';
+      document.getElementById('obs').value = '';
+      renderizar();
+    }
+
+    function copiar(index) {
+      navigator.clipboard.writeText(notas[index]);
+      alert('Nota copiada');
+    }
+
+    function borrar(index) {
+      notas.splice(index, 1);
+      localStorage.setItem('mis_notas', JSON.stringify(notas));
+      renderizar();
+    }
+
+    renderizar();
+  </script>
+
+</body>
+</html>
