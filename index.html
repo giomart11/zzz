@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>generador de notas (itzel)</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 700px; margin: 20px auto; padding: 0 15px; background: #f4f4f9; }
+    .panel { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 10px; margin-top: 4px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+    button { margin-top: 12px; padding: 10px 14px; cursor: pointer; border: none; border-radius: 4px; background: #272b2e; color: white; font-weight: bold; }
+    button.sec { background: #555; }
+    button.del { background: #33cc4c; }
+    .nota-card { background: white; margin-top: 15px; padding: 15px; border-radius: 8px; border-left: 5px solid #232629; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
+    .nota-texto { white-space: pre-wrap; font-family: monospace; font-size: 14px; margin-bottom: 10px; }
+
+  </style>
+</head>
+<body>
+
+  
+  <div class="panel no-imprimir">
+    <h2>Nueva Nota / Expediente</h2>
+
+    <label>Nombre completo:</label>
+    <input type="text" id="nombre" placeholder="Ej. Juan Pérez/910">
+
+    <label>paciente de ingreso/evolucion </label>
+    <select id="ingreso" onchange="mostrarIngreso()">
+      <option value="ingreso">ingreso</option>
+      <option value="evolucion">evolucion</option>
+    </select> 
+
+
+    <label>servicio</label>
+      <select id="servicio">
+        <option value="oncologia">oncologia</option>
+        <option value="hematologia">hematologia</option>
+      </select>
+
+    <label>motivo de ingreso</label>
+    <textarea id="motivo_ingreso" rows="5" placeholder="escribe el motivo"></textarea>
+    
+
+    <label>peso actual en kg</label>
+      <input type = "text" id="peso" placeholder="Ej. 70">
+
+    <label>talla en M</label>
+      <input type ="text" id="talla" placeholder="Ej. 1.70">
+
+    <label>peso habitual en kg</label>
+      <input type ="text" id="peso_habitual" placeholder="Ej. 70">
+      
+    <label> fecha del peso habitual</label>
+     <input type="text" id ="fecha_peso_habitual" placeholder="fecha">
+
+    <label>presento perdida de peso?</label>
+    <select id="perdida_peso">
+      <option value="si">si</option>
+      <option value="no">no</option>
+    </select>
+
+    <label>Observaciones sobre el peso</label>
+    <textarea id="obs_peso" rows="5"></textarea>
+
+    <label > tipo de dieta</label>
+     <input type="text" name="dieta" id="dieta">
+
+    <label >via de alimentacion</label>
+      <select id="via_alimentacion" onchange="mostrar_otro(this, 'otra_via_alimentacion')">
+        <option value="ayuno">ayuno</option>
+        <option value="oral">oral</option>
+        <option value="SNG">SNG</option>
+        <option value="SNY">SNY</option>
+        <option value="NSD">NSD</option>
+        <option value="GST">GST</option>
+        <option value="SY">SY</option>
+        <option value="SOG">SOG</option>
+        <option value='otro'>otro</option>
+      </select>
+      <input type="text" id="otra_via_alimentacion" class="campo_otro" placeholder="otra tipo de dieta" style="display: none;">
+
+    <label>tiene indicada NPP</label>
+      <select  id="NPP">
+        <option value="si">si</option>
+        <option value="no">no</option>
+      </select>
+
+    <label >si tiene indicacion NPP anotar</label>
+      <input type="text" id="NPP_text" placeholder="indicacion NPP">
+
+      <label>tiene charola?</label>
+      <select  id="tiene_charola">
+        <option value="si">si</option>
+        <option value="no">no</option>
+      </select>
+
+    <label> Que % consumio de la charola</label>
+      <select id="consumido_charola" onchange="mostrar_otro(this, 'otro_consumido_charola')">
+        <option value="25%">25%</option>
+        <option value="50%">50%</option>
+        <option value="75%">75%</option>
+        <option value="100%">100%</option>
+        <option value='otro'>otro</option>
+      </select>
+   <input type="text" id="otro_consumido_charola" class="campo_otro "placeholder="otro%" style="display: none;">
+
+    <label>Observaciones de alimentacion:</label>
+      <textarea id="obs_alimentacion" rows="5"></textarea>
+    <label>presenta alguna sintomologia</label>
+      <select id="sintomologia">
+        <option value="si">si</option>
+        <option value="no">no</option>
+      </select>
+
+    <label>si presento alguna sintomologia anotarla</label>
+      <textarea id="sintomologia_text" rows="5" placeholder="anotar sintomologia"></textarea>
+    
+    <label >tiene complemento nutricional indicado</label>
+      <select id="complemento_nutricional">
+        <option value="si">si</option>
+        <option value="no">no</option>
+      </select>
+
+    <label> Que complemento?</label>
+      <input type="text" id="complemento_nutricional_text" placeholder="anotar complemento">
+
+    <label>cuanto se dejo</label>
+   <input type="text" id="cantidad_complemento" placeholder="ingrese la cantidad">
+
+    <label>cuanto comsumio?</label>
+      <select id="consumido_complemento" onchange="mostrar_otro(this, 'otro_consumido_complemento')">
+        <option value="25%">25%</option>
+        <option value="50%">50%</option>
+        <option value="75%">75%</option>
+        <option value="100%">100%</option>
+        <option value='otro'>otro</option>
+      </select>
+      <input type="text" id="otro_consumido_complemento" class="campo_otro" placeholder="otro%" style="display: none;">
+
+    <label>Se modificó o suspendió algún complemento nutricional? </label>
+      <select id="suspension_complemento">
+        <option value="si">si</option>
+        <option value="no">no</option>
+      </select>
+      
+    <label>Cuál fue el motivo de modificación o suspensión? </label>
+     <textarea id="motivo_suspension" rows="3" placeholder="motivo"></textarea>
+  
+    <label>Observaciones generales:</label>
+    <textarea id="obs" rows="5"></textarea>
+
+    <button onclick="agregarNota()">Guardar y agregar nota</button>
+    <button class="sec" onclick="descargarWord()">Descargar en Word</button>
+  </div>
+
+  <h3 class="no-imprimir">Historial de notas</h3>
+  <div id="historial"></div>
+
+  <script>
+    let notas = JSON.parse(localStorage.getItem('mis_notas')) || [];
+
+    function renderizar() {
+      const contenedor = document.getElementById('historial');
+      contenedor.innerHTML = '';
+
+      if (notas.length === 0) {
+        contenedor.innerHTML = '<p class="no-imprimir">Aún no hay notas guardadas.</p>';
+        return;
+      }
+
+      notas.forEach((nota, index) => {
+        const div = document.createElement('div');
+        div.className = 'nota-card';
+        div.innerHTML = `
+          <div class="nota-texto">${nota}</div>
+          <div class="no-imprimir">
+            <button class="sec" onclick="copiar(${index})">Copiar</button>
+            <button class="del" onclick="borrar(${index})">Borrar</button>
+          </div>
+        `;
+        contenedor.appendChild(div);
+      });
+    }
+    function mostrarIngreso(){
+      const mostrar_ingreso = document.getElementById('')
+    }
+    // funcion para mostrar apartado otro
+    function mostrar_otro(select, idcampo){
+      const campo = document.getElementById(idcampo);
+      if (select.value === 'otro'){
+        campo.style.display = 'block'
+      }
+      else{
+        campo.style.display ='none'
+        campo.value = '';
+      }
+
+    }
+
+    function agregarNota() {
+      const ingreso= document.getElementById('ingreso').value;
+      const nombre = document.getElementById('nombre').value.trim() || 'Sin especificar';
+      const servicio = document.getElementById('servicio').value;
+      const motivo_ingreso = document.getElementById('motivo_ingreso').value.trim () || '';
+      const fecha_peso_habitual = document.getElementById('fecha_peso_habitual').value.trim() || '';
+      const obs_peso = document.getElementById('obs_peso').value.trim() || 'Ninguna';
+      const dieta = document.getElementById('dieta').value;
+      const NPP = document.getElementById('NPP').value;
+      const NPP_text = document.getElementById('NPP_text').value.trim() || '';
+      const tiene_charola = document.getElementById('tiene_charola').value;
+      const obs_alimentacion = document.getElementById('obs_alimentacion').value.trim() || 'Ninguna';
+      const sintomologia= document.getElementById('sintomologia').value;
+      const sintomologia_text= document.getElementById('sintomologia_text').value.trim() || '';
+      const complemento_nutricional= document.getElementById('complemento_nutricional').value;
+      const complemento_nutricional_text = document.getElementById('complemento_nutricional_text').value.trim() || '';
+      const cantidad_complemento=document.getElementById('cantidad_complemento').value.trim () || 'ninguno';
+      const suspension_complemento= document.getElementById('suspension_complemento').value.trim() || '';
+      const motivo_suspension= document.getElementById('motivo_suspension').value.trim() || '';
+
+      // variables otro
+      const via_alimentacion = document.getElementById('via_alimentacion').value === 'otro' ? (document.getElementById('otra_via_alimentacion').value.trim () || '') : document.getElementById('via_alimentacion').value;
+      const otra_via_alimentacion= document.getElementById('otra_via_alimentacion').value.trim() || '';
+
+      const consumido_charola=document.getElementById('consumido_charola').value === 'otro' ? (document.getElementById('otro_consumido_charola').value.trim () || '') : document.getElementById('consumido_charola').value;
+      const otro_consumido_charola= document.getElementById('otro_consumido_charola').value.trim () || '';
+      
+      const consumido_complemento= document.getElementById('consumido_complemento').value === 'otro' ? (document.getElementById('otro_consumido_complemento').value.trim () || '') : document.getElementById('consumido_complemento').value;
+      const otro_consumido_complemento = document.getElementById('otro_consumido_complemento').value.trim() || '';
+
+
+      //float variables
+      const peso = parseFloat(document.getElementById('peso').value);
+      const peso_texto = peso > 0 ? peso.toFixed(1): '';
+      const talla = parseFloat(document.getElementById('talla').value);
+      const talla_texto = talla > 0 ? talla.toFixed(2): '';
+      const peso_habitual = parseFloat(document.getElementById('peso_habitual').value.trim() || '');
+      const peso_habitual_texto = peso_habitual > 0 ? peso_habitual.toFixed(1) : '';
+      const obs = document.getElementById('obs').value.trim() || 'Ninguna.';
+      
+
+
+      //fecha/hora
+
+      const fecha = new Date().toLocaleString('es-MX');
+
+      //condicional de perdida de peso
+      const formula_perdida_peso = (((peso_habitual-peso)/peso)*100).toFixed(1);
+      const perdida_peso = document.getElementById('perdida_peso').value;
+      let textoperdida_peso = '';
+      if (perdida_peso === 'si' && peso > 0 && peso_habitual > 0){
+        textoperdida_peso = `presenta perdida, con porcentaje de perdida de ${formula_perdida_peso}%.`;
+      }
+      else {
+        textoperdida_peso = 'no presenta perdida de peso';
+      }
+
+      //formula imc
+      let imc = 'no calcuado';
+      if (peso > 0 && talla > 0){
+        imc=(peso/(talla*talla)).toFixed(2);
+      }
+      
+      // bloques
+      let bloque_peso_habitual = '';
+      if (peso_habitual > 0) {
+        bloque_peso_habitual = ` y peso habitual de ${peso_habitual_texto} kg, registrado el día ${fecha_peso_habitual}`;
+      }
+      let bloque_via_alimentacion = '';
+      if(via_alimentacion === 'ayuno'){
+        bloque_via_alimentacion = `se encuentra en ayuno.`
+
+      }
+      else{ 
+        bloque_via_alimentacion= ` mediante vía de alimentación ${via_alimentacion}.`}
+
+      // condiciones si no
+    let bloquenpp = '';
+      if ( NPP === 'si'){
+        bloquenpp = `cuenta con indicacion de NPP por ${NPP_text}.`
+      }
+      else {bloquenpp = 'no cuenta con indicacion npp.';}
+    
+      let bloquecharola = '';
+      if  (tiene_charola === 'si'){
+        bloquecharola = ` Presenta consumo aproximado del ${consumido_charola} de la charola.\nObservaciones ${obs_alimentacion}.`
+      }
+      else {bloquecharola= '';}
+      
+    let bloquesintomologia = '';
+    if ( sintomologia === 'si'){
+      bloquesintomologia = `Con presencia de sintomas caracterizada por ${sintomologia_text}.`
+    }
+
+    let bloque_complemento_modifico = '';
+    if (suspension_complemento === 'si'){
+      bloque_complemento_modifico= `Se realizó suspencion del complemento nutricional debido a ${motivo_suspension}.`
+    }
+
+    let bloque_complemento = '';
+    let bloque_complemento_evolucion = '';
+    if (complemento_nutricional === 'si'){
+      bloque_complemento= `Cuenta con complemento nutricional indicado, tipo ${complemento_nutricional_text} con un consumo aproximado del ${consumido_complemento}.`
+      bloque_complemento_evolucion = `Cuenta con complemento nutricional indicado, tipo ${complemento_nutricional_text}, se dejaron ${cantidad_complemento} con un consumo aproximado del ${consumido_complemento}, ${bloque_complemento_modifico}`
+    }
+    
+      // impresion de nota 
+      let texto = '';
+if ( ingreso === 'ingreso' ){
+texto = 
+`Paciente ingresa al servicio de ${servicio} por motivo ${motivo_ingreso}. Presenta peso actual de ${peso_texto} kg, talla de ${talla_texto} m${bloque_peso_habitual}.${textoperdida_peso}, IMC de ${imc} kg/m²\nObservaciones:${obs_peso}
+      
+Cuenta con dieta indicada tipo ${dieta}, ${bloque_via_alimentacion} ${ bloquenpp} ${bloquecharola}\n\n${bloquesintomologia}
+      
+${bloque_complemento}
+      
+Observaciones generales: ${obs}`;
+      }
+      if (ingreso === 'evolucion') {
+        texto = 
+`Paciente con indicación de dieta ${dieta},${bloque_via_alimentacion} ${bloquenpp} ${bloquecharola}\n${bloquesintomologia} 
+
+${bloque_complemento_evolucion} 
+Observaciones generales: ${obs}`
+}
+
+      notas.unshift(texto); // Agrega la más reciente arriba
+      localStorage.setItem('mis_notas', JSON.stringify(notas));
+
+      // Limpia el formulario para la siguiente nota
+      document.getElementById('nombre').value = '';
+      document.getElementById('motivo_ingreso').value = '';
+      document.getElementById('fecha_peso_habitual').value = '';
+      document.getElementById('obs_peso').value = '';
+      document.getElementById('NPP_text').value = '';
+      document.getElementById('obs_alimentacion').value = '';
+      document.getElementById('sintomologia_text').value = '';
+      document.getElementById('complemento_nutricional_text').value = '';
+      document.getElementById('motivo_suspension').value = '';
+      document.getElementById('otra_via_alimentacion').value = '';
+      document.getElementById('otra_via_alimentacion').style.display = 'none';
+      document.getElementById('otro_consumido_charola').value = '';
+      document.getElementById('otro_consumido_charola').style.display = 'none';
+      document.getElementById('otro_consumido_complemento').value = '';
+      document.getElementById('otro_consumido_complemento').style.display = 'none';
+      document.getElementById('obs').value = '';
+      document.getElementById('peso').value = '';
+      document.getElementById('talla').value = '';
+      document.getElementById('peso_habitual').value ='';
+      document.getElementById('dieta').value = ''; 
+       document.getElementById('cantidad_complemento').value = '';
+      renderizar();
+    }
+
+    function copiar(index) {
+      navigator.clipboard.writeText(notas[index]);
+      alert('Nota copiada');
+    }
+
+    function borrar(index) {
+      notas.splice(index, 1);
+      localStorage.setItem('mis_notas', JSON.stringify(notas));
+      renderizar();
+    }
+
+    function descargarWord() {
+      if (notas.length === 0) {
+        alert('No hay notas para descargar.');
+        return;
+      }
+
+      const contenido = notas.map(nota => `<p>${nota.replace(/\n/g, '<br>')}</p><hr>`).join('');
+
+      const html = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word'>
+        <head><meta charset='utf-8'></head>
+        <body style="font-family: Arial, sans-serif; font-size: 11pt;">
+          ${contenido}
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+      const enlace = document.createElement('a');
+      enlace.href = URL.createObjectURL(blob);
+      enlace.download = 'notas_pacientes.doc';
+      enlace.click();
+    }
+
+    renderizar();
+  </script>
+
+</body>
+</html>
